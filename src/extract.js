@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import where from './where';
 
 // extend String so we can find the next index of a character
 Object.defineProperty(String.prototype, 'nextIndexOf', {
@@ -85,7 +84,6 @@ const from = selectors => data => {
 
   return {
     result,
-    where: where(result, selectors),
   };
 };
 
