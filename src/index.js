@@ -1,1 +1,3 @@
-export { default as extract } from './extract';
+import extract from './extract';
+
+export default extract;
