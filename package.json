@@ -3,10 +3,16 @@
   "version": "0.1.1",
   "description": "Fancy extractor for js objects",
   "main": "./lib/index.js",
+  "files": [
+    "*.md",
+    "lib",
+    "src"
+  ],
   "scripts": {
     "test": "mocha ./test --require @babel/register",
-    "clean": "rm -rf ./dist",
-    "build": "babel src -d ./lib --source-maps"
+    "clean": "rm -rf ./lib",
+    "build": "babel src -d ./lib --source-maps",
+    "prepublishOnly": "npm run clean && npm run build"
   },
   "repository": {
     "type": "git",
