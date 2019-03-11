@@ -6,7 +6,7 @@
   "scripts": {
     "test": "mocha ./test --require @babel/register",
     "clean": "rm -rf ./dist",
-    "build": "babel src -d ./lib"
+    "build": "babel src -d ./lib --source-maps"
   },
   "repository": {
     "type": "git",

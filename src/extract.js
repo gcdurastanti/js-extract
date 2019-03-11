@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import where from './where';
 
 // extend String so we can find the next index of a character
 Object.defineProperty(String.prototype, 'nextIndexOf', {
@@ -13,14 +14,16 @@ const findClosingBracketMatchIndex = (str, pos) => {
     throw new Error("No '{' at index " + pos);
   }
   let depth = 1;
-  for (let i = pos + 1; i < str.length; i++) {
-    switch (str[i]) {
+  let index = pos + 1;
+  const length = str.length;
+  while (index++ < length) {
+    switch (str[index]) {
       case '{':
         depth++;
         break;
       case '}':
         if (--depth == 0) {
-          return i;
+          return index;
         }
         break;
     }
@@ -38,18 +41,21 @@ const parseBlock = block => {
   }
 
   const parts = block.split('');
-  for (let i = 0; i < parts.length; i++) {
+  const length = parts.length;
+  let index = -1;
+
+  while (index++ < length) {
     const indices = [
-      { token: ':', index: block.nextIndexOf(':', i) },
-      { token: ',', index: block.nextIndexOf(',', i) },
-      { token: '{', index: block.nextIndexOf('{', i) },
-      { token: '}', index: block.nextIndexOf('}', i) },
+      { token: ':', index: block.nextIndexOf(':', index) },
+      { token: ',', index: block.nextIndexOf(',', index) },
+      { token: '{', index: block.nextIndexOf('{', index) },
+      { token: '}', index: block.nextIndexOf('}', index) },
     ];
     const min = _.minBy(indices.filter(val => val.index > 0), 'index');
 
     if (min && min.token === ':') {
       const openBracketIndex = min.index + 1;
-      const topKey = block.substring(i, min.index).replace(',', '');
+      const topKey = block.substring(index, min.index).replace(',', '');
       const blockEnd = findClosingBracketMatchIndex(block, openBracketIndex);
 
       const keys = block.substring(openBracketIndex + 1, blockEnd).split(',');
@@ -60,13 +66,13 @@ const parseBlock = block => {
       selectors.push(...keys.map(mapper), ...subKeys.map(mapper));
 
       // set loop index to end of this block since the recursion has handled it
-      i += blockEnd;
+      index += blockEnd;
     } else if (min && min.token === ',') {
-      const selector = block.substring(i, min.index);
+      const selector = block.substring(index, min.index);
       selectors.push(selector);
-      i += min.index;
+      index += min.index;
     } else if (!min) {
-      selectors.push(block.substring(i, parts.length).replace(',', ''));
+      selectors.push(block.substring(index, parts.length).replace(',', ''));
       break;
     }
   }
@@ -74,16 +80,22 @@ const parseBlock = block => {
   return _.flattenDeep(selectors.filter(selector => !selector.includes(':')));
 };
 
+const from = selectors => data => {
+  const result = _.pick(data, selectors);
+
+  return {
+    result,
+    where: where(result, selectors),
+  };
+};
+
 const extract = query => {
   const normalized = query.replace(/\r?\n|\r|\s/g, '');
   const selectors = parseBlock(normalized);
 
-  const from = data => ({ selectors, result: _.pick(data, selectors) });
-
   return {
-    query,
     selectors,
-    from,
+    from: from(selectors),
   };
 };
 

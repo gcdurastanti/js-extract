@@ -1,0 +1,1 @@
+{"version":3,"sources":["../src/index.js"],"names":[],"mappings":";;;;;;;;;;;;AAAA","sourcesContent":["export { default as extract } from './extract';\n"],"file":"index.js"}
