@@ -65,30 +65,3 @@ describe('extract', () => {
     assert.deepEqual(result, data);
   });
 });
-
-// describe('where', () => {
-//   const data = {
-//     one: {
-//       num: 1,
-//       str: 'one'
-//     },
-//     two: {
-//       num: 2,
-//       str: 'two'
-//     },
-//     three: {
-//       num: 3,
-//       str: 'three'
-//     }
-//   }
-//   const query = `
-//     one,
-//     two,
-//     three
-//   `;
-
-//   const match
-//   it('should return the filtered object', () => {
-//     const { result } = extract(query).from(data).where();
-//   })
-// })

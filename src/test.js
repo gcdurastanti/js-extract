@@ -4,14 +4,23 @@ const data = {
   one: {
     num: 1,
     str: 'one',
+    foo: {
+      bar: 'baz',
+    },
   },
   two: {
     num: 2,
     str: 'two',
+    foo: {
+      bar: 'baz',
+    },
   },
   three: {
     num: 3,
     str: 'three',
+    foo: {
+      bar: 'baz',
+    },
   },
 };
 
@@ -27,6 +36,4 @@ const query = `
     three
   `;
 
-const { result } = extract(query)
-  .from(data)
-  .where('*.str', val => val.length === 3);
+const result = extract(query).from(data);
