@@ -4,7 +4,7 @@ import _ from 'lodash';
 Object.defineProperty(String.prototype, 'nextIndexOf', {
   value(character, currentIndex) {
     const index = this.slice(currentIndex).indexOf(character);
-    return index > 0 ? index + currentIndex : 0;
+    return index >= 0 ? index + currentIndex : -1;
   },
 });
 
@@ -50,7 +50,7 @@ const parseBlock = block => {
       { token: '{', index: block.nextIndexOf('{', index) },
       { token: '}', index: block.nextIndexOf('}', index) },
     ];
-    const min = _.minBy(indices.filter(val => val.index > 0), 'index');
+    const min = _.minBy(indices.filter(val => val.index >= 0), 'index');
 
     if (min && min.token === ':') {
       const openBracketIndex = min.index + 1;
@@ -59,17 +59,19 @@ const parseBlock = block => {
 
       const keys = block.substring(openBracketIndex + 1, blockEnd).split(',');
 
-      const subKeys = parseBlock(keys.filter(key => key.includes(':')).join(','));
+      const subKeys = parseBlock(
+        keys.filter(key => key.includes(':') || key.includes('}')).join(',')
+      );
       const mapper = key => `${topKey}.${key}`;
 
       selectors.push(...keys.map(mapper), ...subKeys.map(mapper));
 
       // set loop index to end of this block since the recursion has handled it
-      index += blockEnd;
-    } else if (min && min.token === ',') {
+      index = blockEnd;
+    } else if (min && min.token === ',' && min.index !== index) {
       const selector = block.substring(index, min.index);
       selectors.push(selector);
-      index += min.index;
+      index = min.index;
     } else if (!min) {
       selectors.push(block.substring(index, parts.length).replace(',', ''));
       break;
@@ -82,9 +84,7 @@ const parseBlock = block => {
 const from = selectors => data => {
   const result = _.pick(data, selectors);
 
-  return {
-    result,
-  };
+  return { result };
 };
 
 const extract = query => {

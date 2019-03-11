@@ -18,6 +18,11 @@ describe('extract', () => {
       second: 'Due',
       third: 'Tre',
     },
+    3: {
+      first: 'Uno',
+      second: 'Due',
+      third: 'Tre',
+    },
   };
 
   const query = `
@@ -32,7 +37,8 @@ describe('extract', () => {
     },
     2: {
       third
-    }
+    },
+    3
   `;
 
   const filteredData = {
@@ -48,6 +54,11 @@ describe('extract', () => {
     2: {
       third: 'Tre',
     },
+    3: {
+      first: 'Uno',
+      second: 'Due',
+      third: 'Tre',
+    },
   };
 
   it('should return the expected shape', () => {
@@ -56,12 +67,12 @@ describe('extract', () => {
   });
 
   it('should return the selected top level keys', () => {
-    const { result } = extract(`1, 2`).from(data);
+    const { result } = extract(`1, 2, 3`).from(data);
     assert.deepEqual(result, data);
   });
 
   it('should return the selected top level keys', () => {
-    const { result } = extract(`{1, 2}`).from(data);
+    const { result } = extract(`{1, 2, 3}`).from(data);
     assert.deepEqual(result, data);
   });
 });

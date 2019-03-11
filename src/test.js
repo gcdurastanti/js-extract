@@ -1,39 +1,43 @@
 import extract from './extract';
 
 const data = {
-  one: {
-    num: 1,
-    str: 'one',
-    foo: {
-      bar: 'baz',
+  1: {
+    first: 'One',
+    second: {
+      two: 'Two',
+      three: 'Three',
+      four: {
+        val: 'Four',
+      },
     },
   },
-  two: {
-    num: 2,
-    str: 'two',
-    foo: {
-      bar: 'baz',
-    },
+  2: {
+    first: 'Uno',
+    second: 'Due',
+    third: 'Tre',
   },
-  three: {
-    num: 3,
-    str: 'three',
-    foo: {
-      bar: 'baz',
-    },
+  3: {
+    first: 'Uno',
+    second: 'Due',
+    third: 'Tre',
   },
-};
-
-const simple = {
-  one: 'one',
-  two: 'two',
-  three: 'three',
 };
 
 const query = `
-    one,
-    two,
-    three
-  `;
+  1: {
+    first,
+    second: {
+      four: {
+        val
+      }
+    }
+  },
+  2: {
+    third
+  },
+  3
+`;
 
-const result = extract(query).from(data);
+const { result } = extract(query).from(data);
+
+console.log(result);
