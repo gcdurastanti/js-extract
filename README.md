@@ -16,7 +16,7 @@ OR
 
 ### Example
 
-```
+```javascript
 const data = {
   one: {
     num: 1,
@@ -49,15 +49,15 @@ extract(selector).from(data);
 
 **Result:**
 
-```
+```javascript
 {
   one: {
-    str: 'one
+    str: 'one'
   },
   two: {
     num: 2,
     foo: {
-      bar: 'baz
+      bar: 'baz'
     }
   }
 }
