@@ -1,4 +1,7 @@
-import _ from 'lodash';
+import isEmpty from 'lodash/isEmpty';
+import minBy from 'lodash/minBy';
+import flattenDeep from 'lodash/flattenDeep';
+import pick from 'lodash/pick';
 
 // extend String so we can find the next index of a character
 Object.defineProperty(String.prototype, 'nextIndexOf', {
@@ -33,7 +36,7 @@ const findClosingBracketMatchIndex = (str, pos) => {
 const parseBlock = block => {
   let selectors = [];
 
-  if (_.isEmpty(block)) {
+  if (isEmpty(block)) {
     return selectors;
   } else if (!block.includes(':')) {
     return block.replace(/({|})/g, '').split(',');
@@ -50,7 +53,7 @@ const parseBlock = block => {
       { token: '{', index: block.nextIndexOf('{', index) },
       { token: '}', index: block.nextIndexOf('}', index) },
     ];
-    const min = _.minBy(indices.filter(val => val.index >= 0), 'index');
+    const min = minBy(indices.filter(val => val.index >= 0), 'index');
 
     if (min && min.token === ':') {
       const openBracketIndex = min.index + 1;
@@ -78,11 +81,11 @@ const parseBlock = block => {
     }
   }
 
-  return _.flattenDeep(selectors.filter(selector => !selector.includes(':')));
+  return flattenDeep(selectors.filter(selector => !selector.includes(':')));
 };
 
 const from = selectors => data => {
-  const result = _.pick(data, selectors);
+  const result = pick(data, selectors);
 
   return { result };
 };
