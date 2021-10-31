@@ -1,12 +1,11 @@
 {
-  "name": "js-extract",
-  "version": "1.0.1",
+  "name": "@gdurastanti/js-extract",
+  "version": "1.0.2",
   "description": "Fancy extractor for js objects",
   "main": "./lib/index.js",
   "files": [
     "*.md",
-    "lib",
-    "src"
+    "lib"
   ],
   "scripts": {
     "test": "mocha ./test --require @babel/register",
@@ -16,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/gcdurastanti/js-extract.git"
+    "url": "git+https://github.com/gcdurastanti/js-extract.git"
   },
   "keywords": [
     "javascript",
@@ -38,5 +37,13 @@
   },
   "dependencies": {
     "lodash": "^4.17.11"
+  },
+  "bugs": {
+    "url": "https://github.com/gcdurastanti/js-extract/issues"
+  },
+  "homepage": "https://github.com/gcdurastanti/js-extract#readme",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
   }
 }
