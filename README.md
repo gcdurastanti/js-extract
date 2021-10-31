@@ -8,7 +8,7 @@ Fancy extractor for js objects that is like destructuring but safer.
 
 ## Use
 
-`import extract from @gdurastnati/'js-extract'`
+`import extract from @gdurastanti/'js-extract'`
 
 OR
 
