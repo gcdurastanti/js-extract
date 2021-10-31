@@ -1,18 +1,18 @@
 # js-extract
 
-Fancy extractor for js objects
+Fancy extractor for js objects that is like destructuring but safer.
 
 ## Install
 
-`npm install --save js-extract`
+`npm install --save @gdurastanti/js-extract`
 
 ## Use
 
-`import extract from 'js-extract'`
+`import extract from @gdurastnati/'js-extract'`
 
 OR
 
-`var extract = require('js-extract').default`
+`var extract = require('@gdurastanti/js-extract').default`
 
 ### Example
 

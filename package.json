@@ -1,6 +1,6 @@
 {
   "name": "@gdurastanti/js-extract",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Fancy extractor for js objects",
   "main": "./lib/index.js",
   "files": [
