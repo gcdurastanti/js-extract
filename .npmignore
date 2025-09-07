@@ -1,0 +1,7 @@
+test/
+tasks.json
+*.test.js
+*.spec.js
+node_modules/
+.git/
+.DS_Store
