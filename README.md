@@ -1,4 +1,57 @@
-# This project does not use lodash.
+# js-extract
+
+Extract values from JavaScript objects using a simple query syntax.
+
+## Install
+
+```sh
+npm install @gdurastanti/js-extract
+```
+
+## Usage
+
+```js
+import extract from '@gdurastanti/js-extract';
+
+const data = {
+  1: { first: 'One', second: { two: 'Two', three: 'Three' } },
+  2: { first: 'Uno', second: 'Due', third: 'Tre' },
+};
+
+const query = `1: { first, second: { two } }, 2: { third }`;
+const result = extract(query).from(data);
+// result: { 1: { first: 'One', second: { two: 'Two' } }, 2: { third: 'Tre' } }
+```
+
+## Query Syntax
+
+- Select top-level keys: `1, 2`
+- Select nested keys: `1: { first, second: { two } }`
+- Select multiple keys: `1, 2, 3`
+- Whitespace and newlines are ignored.
+
+### Edge Cases
+- Non-existent keys are ignored.
+- Missing nested objects return empty objects.
+
+## Features
+
+- No dependencies
+- Minified build for small published size
+- Supports deep extraction
+
+## Contributing & Testing
+
+Clone the repo and run:
+
+```sh
+npm test
+```
+
+## Compatibility
+
+- Node.js >= 12
+- ESM and CommonJS supported
 # js-extract
 
 Fancy extractor for js objects that is like destructuring but safer.

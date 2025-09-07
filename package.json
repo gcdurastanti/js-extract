@@ -11,7 +11,7 @@
   "scripts": {
     "test": "mocha ./test --require @babel/register",
     "clean": "rm -rf ./lib",
-  "build": "babel src -d ./lib && terser ./lib/*.js --compress --mangle --output ./lib/",
+  "build": "babel src -d ./lib && for f in ./lib/*.js; do terser \"$f\" --compress --mangle --output \"$f\"; done",
   "prepublishOnly": "npm run clean && npm run build"
   },
   "repository": {
