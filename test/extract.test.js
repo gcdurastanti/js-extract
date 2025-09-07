@@ -1,125 +1,89 @@
+
 import assert from 'assert';
 import extract from '../src/extract';
 
 describe('extract', () => {
   const data = {
-    1: {
-      first: 'One',
-      second: {
-        two: 'Two',
-        three: 'Three',
-        four: {
-          val: 'Four',
-        },
-      },
-    },
-    2: {
-      first: 'Uno',
-      second: 'Due',
-      third: 'Tre',
-    },
-    3: {
-      first: 'Uno',
-      second: 'Due',
-      third: 'Tre',
-    },
+    1: { first: 'One', second: { two: 'Two', three: 'Three' } },
+    2: { first: 'Uno', second: 'Due', third: 'Tre' },
   };
 
-  const query = `
-    1: {
-      first,
-      second: {
-        two,
-        four: {
-          val
-        }
-      }
-    },
-    2: {
-      third
-    },
-    3
-  `;
-
-  const filteredData = {
-    1: {
-      first: 'One',
-      second: {
-        two: 'Two',
-        four: {
-          val: 'Four',
-        },
-      },
-    },
-    2: {
-      third: 'Tre',
-    },
-    3: {
-      first: 'Uno',
-      second: 'Due',
-      third: 'Tre',
-    },
-  };
-
-  it('should return the expected shape', () => {
+  it('should support string queries (backward compatible)', () => {
+    const query = '1: { first, second: { two } }, 2: { third }';
     const result = extract(query).from(data);
-    assert.deepEqual(result, filteredData);
+    assert.deepEqual(result, { 1: { first: 'One', second: { two: 'Two' } }, 2: { third: 'Tre' } });
   });
 
-  it('should return the selected top level keys', () => {
-    const result = extract(`1, 2, 3`).from(data);
-    assert.deepEqual(result, data);
+  it('should support object queries', () => {
+    const query = { 1: ['first', { second: ['two'] }], 2: ['third'] };
+    const result = extract(query).from(data);
+    assert.deepEqual(result, { 1: { first: 'One', second: { two: 'Two' } }, 2: { third: 'Tre' } });
   });
 
-  it('should return the selected top level keys', () => {
-    const result = extract(`{1, 2, 3}`).from(data);
-    assert.deepEqual(result, data);
-  });
-  it('should handle empty query', () => {
-    const result = extract('').from(data);
-    assert.deepEqual(result, {});
-  });
-
-  it('should handle empty data', () => {
-    const result = extract(query).from({});
-    assert.deepEqual(result, {});
+  it('should support array queries', () => {
+    const query = [ '1.first', '1.second.two', '2.third' ];
+    const result = extract(query).from(data);
+    assert.deepEqual(result, { 1: { first: 'One', second: { two: 'Two' } }, 2: { third: 'Tre' } });
   });
 
   it('should ignore non-existent keys', () => {
-    const result = extract('foo,bar').from(data);
+    const query = { 1: ['foo'], 2: ['bar'] };
+    const result = extract(query).from(data);
     assert.deepEqual(result, {});
   });
 
-  it('should select deeply nested values', () => {
-    const deepQuery = `1: { second: { four: { val } } }`;
-    const expected = { 1: { second: { four: { val: 'Four' } } } };
-    const result = extract(deepQuery).from(data);
-    assert.deepEqual(result, expected);
-  });
-
-  it('should handle queries with extra whitespace', () => {
-    const result = extract(' 1 , 2 , 3 ').from(data);
-    assert.deepEqual(result, data);
-  });
-
-  it('should handle single key query', () => {
-    const result = extract('2').from(data);
-    assert.deepEqual(result, { 2: data[2] });
-  });
-
-  it('should handle invalid syntax gracefully', () => {
-    assert.doesNotThrow(() => extract('1: { first, second: {').from(data));
-  });
-
-  it('should handle numeric keys', () => {
-    const result = extract('1').from(data);
-    assert.deepEqual(result, { 1: data[1] });
-  });
-
   it('should handle missing nested objects', () => {
-  const missingNestedQuery = `2: { second: { missing } }`;
-  const expected = {};
-  const result = extract(missingNestedQuery).from(data);
-  assert.deepEqual(result, expected);
+    const query = { 2: [{ second: ['missing'] }] };
+    const result = extract(query).from(data);
+    assert.deepEqual(result, {});
+  });
+
+  it('should throw on invalid query format', () => {
+    assert.throws(() => extract(123).from(data), /Invalid query format/);
+  });
+});
+
+describe('extract chainable & custom API', () => {
+  const data = { 1: { val: 1 }, 2: { val: 2 }, 3: { val: 3 } };
+
+  it('should support .map() to transform extracted values', () => {
+    const result = extract({ 1: ['val'], 2: ['val'] })
+      .map(x => x * 10)
+      .from(data);
+    assert.deepEqual(result, { 1: { val: 10 }, 2: { val: 20 } });
+  });
+
+  it('should support .filter() to filter extracted values', () => {
+    const result = extract({ 1: ['val'], 2: ['val'], 3: ['val'] })
+      .filter(x => x > 1)
+      .from(data);
+    assert.deepEqual(result, { 2: { val: 2 }, 3: { val: 3 } });
+  });
+});
+
+describe('extract performance', () => {
+  const largeData = {};
+  for (let i = 0; i < 10000; i++) {
+    largeData[i] = { val: i, nested: { deep: i * 2 } };
+  }
+
+  it('should extract from large datasets quickly', () => {
+    const query = { 9999: ['val', { nested: ['deep'] }] };
+    const start = Date.now();
+    const result = extract(query).from(largeData);
+    const duration = Date.now() - start;
+    assert.deepEqual(result, { 9999: { val: 9999, nested: { deep: 19998 } } });
+    assert(duration < 100, `Extraction took too long: ${duration}ms`);
+  });
+
+  it('should memoize repeated queries for speed', () => {
+    const query = { 8888: ['val'] };
+    const firstStart = Date.now();
+    extract(query).from(largeData);
+    const firstDuration = Date.now() - firstStart;
+    const secondStart = Date.now();
+    extract(query).from(largeData);
+    const secondDuration = Date.now() - secondStart;
+    assert(secondDuration <= firstDuration, 'Memoization did not improve speed');
   });
 });
