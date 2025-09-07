@@ -1,3 +1,17 @@
+## Chainable & Custom API (v3)
+
+You can transform or filter extracted values:
+
+```js
+import extract from '@gdurastanti/js-extract';
+
+const data = { 1: { val: 1 }, 2: { val: 2 } };
+const result = extract({ 1: ['val'], 2: ['val'] })
+  .map(x => x * 10)
+  .filter(x => x > 10)
+  .from(data);
+// result: { 2: { val: 20 } }
+```
 # js-extract
 
 Extract values from JavaScript objects using a simple query syntax.
@@ -23,16 +37,26 @@ const result = extract(query).from(data);
 // result: { 1: { first: 'One', second: { two: 'Two' } }, 2: { third: 'Tre' } }
 ```
 
-## Query Syntax
 
-- Select top-level keys: `1, 2`
-- Select nested keys: `1: { first, second: { two } }`
-- Select multiple keys: `1, 2, 3`
-- Whitespace and newlines are ignored.
+## Query Syntax (v3)
+
+You can use:
+- **String queries** (backward compatible):
+  - `1: { first, second: { two } }, 2: { third }`
+- **Object queries:**
+  - `{ 1: ['first', { second: ['two'] }], 2: ['third'] }`
+- **Array queries:**
+  - `[ '1.first', '1.second.two', '2.third' ]`
 
 ### Edge Cases
 - Non-existent keys are ignored.
 - Missing nested objects return empty objects.
+- Invalid query formats throw clear errors.
+
+## Advanced Features (v3)
+- TypeScript support
+- Multiple query formats
+- Improved error handling
 
 ## Features
 
@@ -48,10 +72,30 @@ Clone the repo and run:
 npm test
 ```
 
+## TypeScript Support
+
+Type definitions are included. Usage:
+
+```ts
+import extract from '@gdurastanti/js-extract';
+
+const query: string | object | string[] = ...;
+const result = extract(query).from(data); // result is typed
+```
+
 ## Compatibility
 
 - Node.js >= 12
 - ESM and CommonJS supported
+- Browser/UMD: use `lib/extract.v3.umd.js`
+
+```html
+<script src="lib/extract.v3.umd.js"></script>
+<script>
+  const result = jsExtract({ 1: ['first'] }).from({ 1: { first: 'One' } });
+  console.log(result); // { 1: { first: 'One' } }
+</script>
+```
 # js-extract
 
 Fancy extractor for js objects that is like destructuring but safer.

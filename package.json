@@ -11,8 +11,8 @@
   "scripts": {
     "test": "mocha ./test --require @babel/register",
     "clean": "rm -rf ./lib",
-  "build": "babel src -d ./lib && for f in ./lib/*.js; do terser \"$f\" --compress --mangle --output \"$f\"; done",
-  "prepublishOnly": "npm run clean && npm run build"
+  "build": "babel src -d ./lib && for f in ./lib/*.js; do terser \"$f\" --compress --mangle --output \"$f\"; done && rollup -c",
+    "prepublishOnly": "npm run clean && npm run build"
   },
   "repository": {
     "type": "git",
@@ -30,11 +30,13 @@
     "@babel/core": "^7.3.4",
     "@babel/preset-env": "^7.3.4",
     "@babel/register": "^7.0.0",
+    "@rollup/plugin-babel": "^6.0.4",
     "babel-eslint": "^10.0.1",
     "eslint": "^5.15.1",
     "eslint-plugin-mocha": "^5.3.0",
     "mocha": "^6.0.2",
     "prettier": "^1.16.4",
+    "rollup": "^4.50.0",
     "terser": "^5.44.0"
   },
   "bugs": {
