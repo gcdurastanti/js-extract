@@ -123,6 +123,3 @@ describe('extract', () => {
   assert.deepEqual(result, expected);
   });
 });
-
-  git config --global user.email "cvd2261@protonmail.com"
-  git config --global user.name "Giancarlo Durastanti"
