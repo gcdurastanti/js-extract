@@ -75,4 +75,54 @@ describe('extract', () => {
     const result = extract(`{1, 2, 3}`).from(data);
     assert.deepEqual(result, data);
   });
+  it('should handle empty query', () => {
+    const result = extract('').from(data);
+    assert.deepEqual(result, {});
+  });
+
+  it('should handle empty data', () => {
+    const result = extract(query).from({});
+    assert.deepEqual(result, {});
+  });
+
+  it('should ignore non-existent keys', () => {
+    const result = extract('foo,bar').from(data);
+    assert.deepEqual(result, {});
+  });
+
+  it('should select deeply nested values', () => {
+    const deepQuery = `1: { second: { four: { val } } }`;
+    const expected = { 1: { second: { four: { val: 'Four' } } } };
+    const result = extract(deepQuery).from(data);
+    assert.deepEqual(result, expected);
+  });
+
+  it('should handle queries with extra whitespace', () => {
+    const result = extract(' 1 , 2 , 3 ').from(data);
+    assert.deepEqual(result, data);
+  });
+
+  it('should handle single key query', () => {
+    const result = extract('2').from(data);
+    assert.deepEqual(result, { 2: data[2] });
+  });
+
+  it('should handle invalid syntax gracefully', () => {
+    assert.doesNotThrow(() => extract('1: { first, second: {').from(data));
+  });
+
+  it('should handle numeric keys', () => {
+    const result = extract('1').from(data);
+    assert.deepEqual(result, { 1: data[1] });
+  });
+
+  it('should handle missing nested objects', () => {
+  const missingNestedQuery = `2: { second: { missing } }`;
+  const expected = {};
+  const result = extract(missingNestedQuery).from(data);
+  assert.deepEqual(result, expected);
+  });
 });
+
+  git config --global user.email "cvd2261@protonmail.com"
+  git config --global user.name "Giancarlo Durastanti"

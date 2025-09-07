@@ -1,3 +1,4 @@
+# This project does not use lodash.
 # js-extract
 
 Fancy extractor for js objects that is like destructuring but safer.

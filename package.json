@@ -35,9 +35,6 @@
     "mocha": "^6.0.2",
     "prettier": "^1.16.4"
   },
-  "dependencies": {
-    "lodash": "^4.17.11"
-  },
   "bugs": {
     "url": "https://github.com/gcdurastanti/js-extract/issues"
   },
